@@ -7,12 +7,12 @@
     static public bool exit = false;
     static public int winCount = 0;
     static public int loseCount = 0;
-    static public int draw = 0;
+    static public int drawCount = 0;
     
     static void Main()
     {
         if(!exit) Console.WriteLine("\nHi :)\n");
-        else Console.WriteLine($"bye:(\nКол-во побед: {winCount}\nпоражений: {loseCount}\nничьей: {draw}\n");
+        else Console.WriteLine($"bye:(\nКол-во побед: {winCount}\nпоражений: {loseCount}\nничьей: {drawCount}\n");
         for(int i = 0; i < 6; i++) 
         {
             ReturnResultGame();
@@ -21,9 +21,9 @@
 
     static public void ReturnResultGame()
     { 
-        countMatch++;
         if(exit) return;
-
+        countMatch++;
+        
         /*
            1 │ 2 │ 3 
            — ┼ – ┼ ―
@@ -32,14 +32,13 @@
            7 │ 8 │ 9
         */
 
-        
         for(int i = 0; i < num.Count; i++)
            SetColorText(i, num[i].ToString());  
 
         void SetColorText(int index, string? word)
         {
-                if (index == 5 || index == 2) {SetColorWord(index,word); Console.Write("\n— ┼ – ┼ ―\n");}
-                else if (index == num.Count - 1) {SetColorWord(index,word); Console.WriteLine();}
+                if(index == 5 || index == 2) {SetColorWord(index,word); Console.Write("\n— ┼ – ┼ ―\n");}
+                else if(index == num.Count - 1) {SetColorWord(index,word); Console.WriteLine();}
                 else {SetColorWord(index,word); Console.Write(" │ ");}
         }
 
@@ -59,16 +58,15 @@
             }
             else Console.Write(word);
         }
-        string WOL = WinOrLose();
-        if(WOL != "Ничья") ClearAndRepaet();
-        else if(countMatch == 6 && WOL == "Ничья") {draw++; ClearAndRepaet();}
+
+        string wOL = WinOrLose();
+        if(wOL != "Ничья") ClearAndRepaet();
+        else if(countMatch == 6 && wOL == "Ничья") ClearAndRepaet();
         if(exit) return;
         
-        //if (exit) return;
         Console.WriteLine("\nВыберите число, чтобы сделать ход (от 1 до 9 включительно)");
         string? strOfGamer = Console.ReadLine();
 
-        
         bool findNum = false;
         int indexForGame = 0;
         int indexForGame2 = 0;
@@ -88,13 +86,13 @@
         
         num[indexForGame] = "X";
         
-        if (countMatch == 1) 
+        if(countMatch == 1) 
         {
             indexForGame2 = IndexReturn();
             numNoReturn.Remove((int)num[indexForGame2]);
             num[indexForGame2] = "O";
         }
-        else if (countMatch > 1 && countMatch < 5)  
+        else if(countMatch > 1 && countMatch < 5)  
         {   
             numNoReturn.Remove((int)num[GameAI(num)]);
             num[GameAI(num)] = "O";
@@ -138,6 +136,7 @@
                 }
             }
         }
+
         return IndexReturn();   
     }
 
@@ -148,7 +147,7 @@
     }
 
     static public int IndexReturn()
-    {
+    {        
         int numRan = randomNum.Next(0,9);
         while(NoReturn(num[numRan].ToString()))
             numRan = randomNum.Next(0,9);
@@ -166,8 +165,8 @@
             { 
                 if(num[int.Parse(numChar.ToString())].ToString() == "X") countForWin++;
                 else if(num[int.Parse(numChar.ToString())].ToString() == "O") countForLose++;
-                if(countForWin == 3) {winCount++; return "Победа";}
-                else if(countForLose == 3) {loseCount++; return "Проигрыш";}
+                if(countForWin == 3)  return "Победа";
+                else if(countForLose == 3)  return "Проигрыш";
             }
         }
 
@@ -175,16 +174,21 @@
     }
 
     public static void ClearAndRepaet()
-    {
-        Console.WriteLine(WinOrLose() + "\nНажмите любую кнопку, чтобы начать заново(exit, чтобы выйти)");
+    {   
+        string wOL = WinOrLose();
+
+        if(wOL == "Победа") winCount++; 
+        else if(wOL == "Проигрыш") loseCount++; 
+        else drawCount++;
+
+        Console.WriteLine(wOL + "\nНажмите любую кнопку, чтобы начать заново(exit, чтобы выйти)");
         num.Clear(); numNoReturn.Clear(); countMatch = 0;
         for(int i = 1; i < 10; i++) {num.Add(i); numNoReturn.Add(i);}
         string? str = Console.ReadLine();
-        if (str != null) 
+        if(str != null) 
         {
             if(str.ToLower() == "exit") {exit = true;}
         }
         Console.Clear(); Main();
     }   
 }
-
